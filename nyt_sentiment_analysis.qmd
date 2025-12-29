@@ -1,0 +1,61 @@
+---
+title: "Sentiment Analysis of 2017 New York Times Comments "
+format: html
+---
+
+# Introduction
+
+# Data Inspection
+
+```{r}
+
+library(dplyr)
+library(ggplot2)
+library(plotly)
+
+library(tidyr)
+library(tidytext)
+library(SnowballC)
+
+library(textmineR)
+library(textstem)
+library(tm)
+library(syuzhet)
+
+library(tibble)
+
+library(textclean)
+library(furrr)
+
+
+```
+
+
+```{r}
+
+
+nyt_comments17 |> 
+    glimpse()
+
+
+```
+
+
+```{r}
+
+
+nyt_comments17<-read.csv("nyt_comments17.csv")
+
+
+```
+
+
+```{r}
+
+
+nyt_comments17 |> head()
+
+
+```
+
+# Data Preparation
