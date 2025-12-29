@@ -58,4 +58,93 @@ nyt_comments17 |> head()
 
 ```
 
+```{r}
+
+saveRDS(nyt_comments17, "nyt_comments17.rds")
+
+
+```
+
+```{r}
+
+
+nyt_comments17_short<-nyt_comments17 |> 
+    select(-commentType)
+
+
+
+```
+
+We will remove the column commentType
+
+
+```{r}
+
+nyt_comments17_short |> 
+    glimpse()
+
+
+
+```
+
+```{r}
+
+
+saveRDS(nyt_comments17_short, "nyt_comments17_short.rds")
+
+
+```
+
 # Data Preparation
+
+
+We will need a function to clean the text in the New York Times commentBody.  
+
+
+
+
+```{r}
+
+clean_comment_text <- function(text) {
+  text %>%
+    gsub("<.*?>", " ", .) %>%                  # Remove HTML/Markdown tags like <br/>
+    gsub("\\\\", " ", .) %>%                   # Remove backslashes
+    gsub("[^\\p{L}\\p{N}\\s!?\\p{Emoji_Presentation}]", " ", ., perl = TRUE) %>%  
+    gsub("\\s+", " ", .) %>%                   # Replace multiple spaces with single space
+    trimws()
+}
+
+
+
+```
+
+```{r}
+
+
+nyt_comments_clean<-nyt_comments17_short |> 
+    mutate(clean_comments = clean_comment_text(commentBody))
+
+
+```
+
+
+
+```{r}
+
+
+nyt_comments_clean |> 
+    glimpse()
+
+
+
+```
+
+```{r}
+
+saveRDS(nyt_comments_clean, "nyt_comments_clean.rds")
+
+
+```
+
+
+# Sentiment extraction
