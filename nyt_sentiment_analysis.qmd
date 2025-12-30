@@ -179,3 +179,15 @@ plan(multisession, workers = parallel::detectCores() - 1)
 
 
   ```
+
+Now that we have set up our parallel processing we will extract sentiments from the clean_comment column of our dataset using the get_sentiment function from the syuzhet library.  The afinn method will be used for labeling the sentiment of each row of comments.  Afinn assigns a sentiment score for each row, ranging fron -5 to 5. 
+
+  ```{r}
+  
+comments17_sentiment<-nyt_comments_clean |> 
+    mutate(
+        sentiment_score=future_map_dbl(clean_comments, get_sentiment, method = "afinn")
+    )
+
+
+  ```
