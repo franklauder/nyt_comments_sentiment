@@ -191,3 +191,68 @@ comments17_sentiment<-nyt_comments_clean |>
 
 
   ```
+
+
+  ```{r}
+  
+
+comments17_sentiment |> glimpse()
+
+
+  ```
+
+
+  Using glimpse we see that there is a sentiment_score column.
+
+
+  ```{r}
+  
+
+comments17_sentiment |> 
+    select(commentID, sentiment_score) |> 
+    head(30)
+
+
+  ```
+
+  Now that we have sentiment scores our next step is to assign a sentiment based on these scores.  Negative scores will be assigned a sentiment of "negative", positive scores will be assigned a sentiment of "positive", and a score of zero will be assigned "nuetral".  This will be done using the case_when function from the dplyr library.
+
+
+  ```{r}
+  
+
+comments17_sentiment<-comments17_sentiment %>% 
+  mutate(sentiment=case_when(
+    sentiment_score > 0 ~ "positive",
+    sentiment_score < 0 ~ "negative",
+    TRUE ~ "neutral"
+  ))
+
+
+
+  ```
+
+
+  ```{r}
+  
+comments17_sentiment |> 
+    glimpse()
+
+
+  ```
+
+
+  ```{r}
+  
+
+comments17_sentiment |> 
+    select(commentID, sentiment) |> 
+    head(30)
+
+  ```
+
+
+  # Sentiment Review
+
+
+  
