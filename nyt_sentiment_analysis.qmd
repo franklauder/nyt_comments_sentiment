@@ -148,3 +148,34 @@ saveRDS(nyt_comments_clean, "nyt_comments_clean.rds")
 
 
 # Sentiment extraction
+
+
+```{r}
+
+
+nyt_comments_clean<-readRDS("nyt_comments_clean.rds")
+
+
+
+```
+
+```{r}
+
+
+nrow(nyt_comments_clean)
+
+```
+
+
+Because the dataset is relatively large at 969,655 rows, we will use parallel processing for efficency and speed during sentiment extraction. 
+ To accomplish this we will use the future_map_dbl function from the the furrr library.  This function helps use cpu cores to parallel tasks. 
+ All but one cpu core will be used for our processing. 
+
+
+  ```{r}
+  
+
+plan(multisession, workers = parallel::detectCores() - 1)
+
+
+  ```
