@@ -269,3 +269,30 @@ comments17_sentiment |>
 
 
   ```
+
+
+
+
+
+  ```{r}
+  
+
+comments17_sentiment |> 
+    count(sentiment,newDesk, sort=TRUE, name="Count") |> 
+    mutate(percent=round(Count/sum(Count),2))
+
+
+
+  ```
+
+
+
+  ```{r}
+  
+
+
+
+
+
+  
+  ```
