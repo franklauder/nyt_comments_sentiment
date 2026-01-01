@@ -11,6 +11,7 @@ format: html
 
 library(dplyr)
 library(ggplot2)
+library(treemapify)
 library(plotly)
 
 library(tidyr)
@@ -29,6 +30,10 @@ library(furrr)
 
 
 ```
+
+
+
+
 
 
 ```{r}
@@ -235,6 +240,15 @@ comments17_sentiment<-comments17_sentiment %>%
 
   ```{r}
   
+
+saveRDS(comments17_sentiment, "comments17_sentiment.rds")
+
+
+  ```
+
+
+  ```{r}
+  
 comments17_sentiment |> 
     glimpse()
 
@@ -291,8 +305,35 @@ comments17_sentiment |>
   
 
 
-
+sentiment_tree<-comments17_sentiment |> 
+  count(sentiment) |> 
+  mutate(perc = round(n/sum(n),3)*100)
 
 
   
+  ```
+
+
+  ```{r}
+  
+  
+  tree_map<-ggplot(sentiment_tree, aes(area=perc, fill = sentiment, label=perc))+
+  geom_treemap()+
+  geom_treemap_text()+
+  ggtitle("Sentiment (Percent)")+
+  theme(plot.title = element_text(color="black", size=14, face="bold.italic", hjust=0.5))+
+  scale_fill_discrete(name = "Sentiment")+
+  scale_y_continuous(labels=scales::percent_format())
+
+
+
+
+  ```
+
+
+  ```{r}
+  
+
+tree_map
+
   ```
