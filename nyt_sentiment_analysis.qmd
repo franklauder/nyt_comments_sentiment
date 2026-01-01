@@ -314,6 +314,8 @@ sentiment_tree<-comments17_sentiment |>
   ```
 
 
+Tree map
+
   ```{r}
   
   
@@ -335,5 +337,31 @@ sentiment_tree<-comments17_sentiment |>
   
 
 tree_map
+
+  ```
+
+
+  Dot Plot
+
+
+  ```{r}
+  
+
+dot_cnt<-ggplot(comments17_sentiment, aes(x=sentiment,y=typeOfMaterial))+
+  geom_count(aes(colour=sentiment))
+
+
+
+
+
+  ```
+
+
+  ```{r}
+  
+
+gg_dot_cnt<-ggplotly(dot_cnt)
+
+
 
   ```
