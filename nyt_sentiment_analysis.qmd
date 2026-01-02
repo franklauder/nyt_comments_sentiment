@@ -249,6 +249,15 @@ saveRDS(comments17_sentiment, "comments17_sentiment.rds")
 
   ```{r}
   
+
+comments17_sentiment<-readRDS("comments17_sentiment.rds")
+
+
+  ```
+
+
+  ```{r}
+  
 comments17_sentiment |> 
     glimpse()
 
@@ -374,6 +383,7 @@ gg_dot_cnt<-ggplotly(dot_cnt)
   
 
 tile_cnt<-comments17_sentiment |> 
+  group_by(newDesk) |> 
   count(sentiment, newDesk) |> 
   mutate(perc=round(n/sum(n),2)*100)
 
@@ -395,18 +405,14 @@ g_tile<-tile_cnt |>
 
   ```
 
+  
+
 
   ```{r}
   
 
-g_tile<- comments17_sentiment %>% 
-      count(newDesk, sentiment) %>% 
-      ggplot(aes(x=sentiment,y=newDesk))+
-      geom_tile(aes(fill=n))+
-      labs(fill = "Count")+
-      xlab("Sentiment")+
-      theme(axis.title.y=element_blank())
 
+gg_gtile<-ggplotly(g_tile)
 
 
 
