@@ -365,3 +365,61 @@ gg_dot_cnt<-ggplotly(dot_cnt)
 
 
   ```
+
+  Tile Plot
+
+
+
+  ```{r}
+  
+
+tile_cnt<-comments17_sentiment |> 
+  count(sentiment, newDesk) |> 
+  mutate(perc=round(n/sum(n),2)*100)
+
+
+  ```
+
+  ```{r}
+  
+g_tile<-tile_cnt |> 
+  ggplot(aes(x=sentiment,y=newDesk))+
+      geom_tile(aes(fill=perc))+
+      labs(fill = "Percent")+
+      xlab("Sentiment")+
+      theme(axis.title.y=element_blank())
+
+
+
+
+
+  ```
+
+
+  ```{r}
+  
+
+g_tile<- comments17_sentiment %>% 
+      count(newDesk, sentiment) %>% 
+      ggplot(aes(x=sentiment,y=newDesk))+
+      geom_tile(aes(fill=n))+
+      labs(fill = "Count")+
+      xlab("Sentiment")+
+      theme(axis.title.y=element_blank())
+
+
+
+
+
+
+  ```
+
+
+
+  ```{r}
+  
+
+g_tile
+
+
+  ```
