@@ -5,18 +5,13 @@ format: html
 
 # Introduction
 
+Natural language processing (NLP) basically focuses on using computers to analyze and understand text. It converts human language into a format that machines can understand and process. This enables computers to analyze and make sense of human language. There are many techniques used in NLP, such as text classification, topic modeling, and others. For our project we’ll be using the sentiment analysis technique. Sentiment analysis determines the opinion of an author expressed in a piece of text. The text can be categorized as either positive, negative, or neutral. We’ll be analyzing comments from the New York Times for the 2017 year. The data includes then months January through April. The datasets used for our analysis can be found on the Kaggle web site at then following link: [New York Times Comments](https://www.kaggle.com/datasets/aashita/nyt-comments)
 
-Natural language processing (NLP) basically focuses on using computers to analyze and understand text.   It converts human language into a format that machines can understand and process.  This enables computers to analyze and make sense of human language.  There are many techniques used in NLP, such as text classification, topic modeling, and others.  For our project we’ll be using the sentiment analysis technique.   Sentiment analysis determines the opinion of an author expressed in a piece of text.   The text can be categorized as either positive, negative, or neutral.    We’ll be analyzing comments from the New York Times for the 2017 year.  The data includes then months January through April.  The datasets used for our analysis can be found on the Kaggle web site at then following link.: https://www.kaggle.com/datasets/aashita/nyt-comments.  Code used for our analysis is hidden and can ber viewed by expanding the "Show Code" option
-
-
-
+Code used for our analysis is hidden and can be viewed by expanding the "Show Code" option
 
 # Data Inspection
 
-
-## We'll first load the required libraries. 
-
-
+## We'll first load the required libraries.
 
 ```{r}
 #| code-fold: true
@@ -35,7 +30,6 @@ library(furrr)
 
 ```
 
-
 ```{r}
 #| include: false
 
@@ -52,9 +46,6 @@ library(textclean)
 
 ```
 
-
-
-
 ## Data Review
 
 ```{r}
@@ -66,8 +57,6 @@ nyt_comments17<-read.csv("nyt_comments17.csv")
 
 
 ```
-
-
 
 ```{r}
 #| eval: false
@@ -96,9 +85,6 @@ nrow(nyt_comments17)
 
 ```
 
-
-
-
 ```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
@@ -108,11 +94,7 @@ nyt_comments17 |> glimpse()
 
 ```
 
-<br/>
-
-We see from the above outputs that our dataset has just under 970,000 nrows.  We will not require the commentType column and will remove it. 
-
-
+We see from the above outputs that our dataset has just under 970,000 nrows. We will not require the commentType column and will remove it.
 
 ```{r}
 #| code-fold: true
@@ -125,9 +107,6 @@ nyt_comments17_short<-nyt_comments17 |>
 
 
 ```
-
-
-
 
 ```{r}
 #| code-fold: true
@@ -150,7 +129,6 @@ saveRDS(nyt_comments17_short, "nyt_comments17_short.rds")
 
 ```
 
-
 ```{r}
 #| echo: false
 
@@ -162,12 +140,7 @@ nyt_comments17_short <- readRDS("nyt_comments17_short.rds")
 
 # Data Preparation
 
-
-
-Now that our data is selected, we will prepare our data for analysis. First a function will be created to clean 
-the text in the commentBody.  This will include removing HTML/Markdown tags, backslashes, and replacing multiple spaces with a single space. 
-
-
+Now that our data is selected, we will prepare our data for analysis. First a function will be created to clean the text in the commentBody. This will include removing HTML/Markdown tags, backslashes, and replacing multiple spaces with a single space.
 
 ```{r}
 #| code-fold: true
@@ -186,8 +159,6 @@ clean_comment_text <- function(text) {
 
 ```
 
-
-
 ```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
@@ -198,8 +169,6 @@ nyt_comments_clean<-nyt_comments17_short |>
 
 
 ```
-
-
 
 ```{r}
 #| code-fold: true
@@ -222,9 +191,7 @@ saveRDS(nyt_comments_clean, "nyt_comments_clean.rds")
 
 ```
 
-
 # Sentiment extraction
-
 
 ```{r}
 #| echo: false
@@ -245,29 +212,19 @@ nrow(nyt_comments_clean)
 
 ```
 
+Because the dataset is relatively large at 969,655 rows, we will use parallel processing for efficency and speed during sentiment extraction. To accomplish this we will use the future_map_dbl function from the the furrr library. This function helps use cpu cores to parallel tasks. All but one cpu core will be used for our processing.
 
-
-Because the dataset is relatively large at 969,655 rows, we will use parallel processing for efficency and speed during sentiment extraction. 
-To accomplish this we will use the future_map_dbl function from the the furrr library.  This function helps use cpu cores to parallel tasks. 
-All but one cpu core will be used for our processing. 
-
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 plan(multisession, workers = parallel::detectCores() - 1)
 
 
-  ```
+```
 
- 
-
-For our sentiment analysis we will need to choose a sentiment lexicon.  A lexicon is basically a sentiment dictionary that includes words and the sentiment the word has been tagged with such as negative or positive.  We’ll be using the AFINN dictionary, which instead of each work being tagged as negative or positive, they are given a numeric score with a negative score indicating negative sentiment, a positive score indicating a positive sentiment, and a score of zero indicating neutral sentiment.  The numeric scores range from -5 to 5.  AFINN calculates the compounded score for each sentence in the text by adding the scores (weights) of each of the sentiment words.   From this calculated score we can assign a category for each row of text. 
-
-
+For our sentiment analysis we will need to choose a sentiment lexicon. A lexicon is basically a sentiment dictionary that includes words and the sentiment the word has been tagged with such as negative or positive. We’ll be using the AFINN dictionary, which instead of each work being tagged as negative or positive, they are given a numeric score with a negative score indicating negative sentiment, a positive score indicating a positive sentiment, and a score of zero indicating neutral sentiment. The numeric scores range from -5 to 5. AFINN calculates the compounded score for each sentence in the text by adding the scores (weights) of each of the sentiment words. From this calculated score we can assign a category for each row of text.
 
 ```{r}
 #| code-fold: true
@@ -277,289 +234,220 @@ get_sentiments("afinn")
 
 ```
 
+The first ten rows of te AFINN dictionary are shown above. We see the first column is the word and second is the value holding the sentiment score.
 
-
-
-The first ten rows of te AFINN dictionary are shown above.  We see the first column is the word and second is the value holding the sentiment score. 
-
-
-
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 comments17_sentiment<-nyt_comments_clean |> 
-    mutate(
-        sentiment_score=future_map_dbl(clean_comments, get_sentiment, method = "afinn")
-    )
+  mutate(
+      sentiment_score=future_map_dbl(clean_comments, get_sentiment, method = "afinn")
+  )
 
 
-  ```
+```
 
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 comments17_sentiment |> glimpse()
 
 
-  ```
+```
 
-
-
- 
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 comments17_sentiment |> 
-    select(commentID, sentiment_score) |> 
-    head(30)
+  select(commentID, sentiment_score) |> 
+  head(30)
 
 
-  ```
+```
 
-  
+Using the glimpse function we now find that there is a new column named "sentiment_score". Viewing the first thirty rows we see that a score has been assigned to each row.
 
-Using the glimpse function we now find  that there is a new column named "sentiment_score".  Viewing the first thirty rows we see that a score has been assigned to each row. 
+Now that we have sentiment scores our next step is to assign a sentiment based on these scores. Negative scores (-5 to -1) will be assigned a sentiment of "negative", positive scores (1 to 5) will be assigned a sentiment of "positive", and a score of zero will be assigned "neutral". This will be accomplished using the case_when function from the dplyr library.
 
-Now that we have sentiment scores our next step is to assign a sentiment based on these scores.  Negative scores (-5 to -1) will be assigned a sentiment of "negative", positive scores (1 to 5) will be assigned a sentiment of "positive", and a score of zero will be assigned "neutral".  This will be accomplished using the case_when function from the dplyr library.
-
-
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 comments17_sentiment<-comments17_sentiment %>% 
-  mutate(sentiment=case_when(
-    sentiment_score > 0 ~ "positive",
-    sentiment_score < 0 ~ "negative",
-    TRUE ~ "neutral"
-  ))
+mutate(sentiment=case_when(
+  sentiment_score > 0 ~ "positive",
+  sentiment_score < 0 ~ "negative",
+  TRUE ~ "neutral"
+))
 
 
 
-  ```
+```
 
-
-
-
-  ```{r}
+```{r}
 #| eval: false
 #| include: false
 
 saveRDS(comments17_sentiment, "comments17_sentiment.rds")
 
 
-  ```
+```
 
-
-  ```{r}
+```{r}
 #| include: false
-  
+
 
 comments17_sentiment<-readRDS("comments17_sentiment.rds")
 
 
-  ```
+```
 
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
-comments17_sentiment |> 
-    glimpse()
-
-
-  ```
-
-
-
-  ```{r}
-  
 
 comments17_sentiment |> 
-    select(commentID, sentiment) |> 
-    head(30)
-
-  ```
-
-  
-
-Our data now has a "sentiment" column reflecting negative, positive, or neutral, base on the sentiment_score coluimn. 
+  glimpse()
 
 
+```
+
+```{r}
 
 
+comments17_sentiment |> 
+  select(commentID, sentiment) |> 
+  head(30)
+
+```
+
+Our data now has a "sentiment" column reflecting negative, positive, or neutral, base on the sentiment_score coluimn.
 
 # Sentiment Review
 
-
-
-
-
 Visualization can help us view the percent breakdown of sentiment and compare sentiment by type of material and news desk.
 
-
-
-
-
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 
 sentiment_tree<-comments17_sentiment |> 
-  count(sentiment) |> 
-  mutate(perc = round(n/sum(n),3)*100)
-
-
-  
-  ```
+count(sentiment) |> 
+mutate(perc = round(n/sum(n),3)*100)
 
 
 
+```
 
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
-  
-  tree_map<-ggplot(sentiment_tree, aes(area=perc, fill = sentiment, label=perc))+
-  geom_treemap()+
-  geom_treemap_text()+
-  ggtitle("Sentiment (Percent)")+
-  theme(plot.title = element_text(color="black", size=14, face="bold.italic", hjust=0.5))+
-  scale_fill_discrete(name = "Sentiment")+
-  scale_y_continuous(labels=scales::percent_format())
+
+
+tree_map<-ggplot(sentiment_tree, aes(area=perc, fill = sentiment, label=perc))+
+geom_treemap()+
+geom_treemap_text()+
+ggtitle("Sentiment (Percent)")+
+theme(plot.title = element_text(color="black", size=14, face="bold.italic", hjust=0.5))+
+scale_fill_discrete(name = "Sentiment")+
+scale_y_continuous(labels=scales::percent_format())
 
 
 
 
-  ```
+```
 
-
-  ```{r}
+```{r}
 #| fig-cap: Sentiment Tree Map
 #| echo: false
-  
+
 
 tree_map
 
-  ```
+```
 
+From the Tree Map plot we find that postive and negative sentiments are virtuall equal at 42.2% and 42.8% respectively.
 
-From the Tree Map plot we find that postive and negative sentiments are virtuall equal at 42.2% and 42.8% respectively. 
-
-
-
-
-  
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 dot_cnt<-ggplot(comments17_sentiment, aes(x=sentiment,y=typeOfMaterial))+
-  geom_count(aes(colour=sentiment))
+geom_count(aes(colour=sentiment))
 
 
 
 
 
-  ```
+```
 
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 gg_dot_cnt<-ggplotly(dot_cnt)
 
 
 
-  ```
-  <br/>
+```
 
-  ```{r}
+<br/>
+
+```{r}
 #| fig-cap: Sentiment by Type of Material
 #| echo: false
-  
+
 gg_dot_cnt
 
 
-  ```
+```
 
-  
+Editorial has the greatest difference between negative and positive sentiment.
 
-  Editorial has the greatest difference between negative and positive sentiment. 
-  
-
-  
-
-  
-
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 tile_cnt<-comments17_sentiment |> 
-  group_by(newDesk) |> 
-  count(sentiment, newDesk) |> 
-  mutate(perc=round(n/sum(n),2)*100)
+group_by(newDesk) |> 
+count(sentiment, newDesk) |> 
+mutate(perc=round(n/sum(n),2)*100)
 
 
-  ```
+```
 
-  
-
- 
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 g_tile<-tile_cnt |> 
-  ggplot(aes(x=sentiment,y=newDesk))+
-      geom_tile(aes(fill=perc))+
-      labs(fill = "Percent")+
-      xlab("Sentiment")+
-      theme(axis.title.y=element_blank())
+ggplot(aes(x=sentiment,y=newDesk))+
+    geom_tile(aes(fill=perc))+
+    labs(fill = "Percent")+
+    xlab("Sentiment")+
+    theme(axis.title.y=element_blank())
 
 
 
 
 
-  ```
+```
 
-  
-
-
-  ```{r}
+```{r}
 #| code-fold: true
 #| code-summary: "Show Code"
-  
+
 
 
 gg_gtile<-ggplotly(g_tile)
@@ -568,21 +456,17 @@ gg_gtile<-ggplotly(g_tile)
 
 
 
-  ```
+```
 
-
-
-  ```{r}
+```{r}
 #| fig-cap: Sentiment by News Desk
 #| echo: false
 
-  
+
 
 gg_gtile
 
 
-  ```
+```
 
-  
-
-Observing sentiment within each news desk section,the Styles, Dining, Book Review, and Metropolitan sections are by far have the highest percentage pf positive comments, all being over 60%.  The foreign section has the greatest percentage of negative comments at 50% with 17% of comments being neutral. 
+Observing sentiment within each news desk section,the Styles, Dining, Book Review, and Metropolitan sections are by far have the highest percentage pf positive comments, all being over 60%. The foreign section has the greatest percentage of negative comments at 50% with 17% of comments being neutral.
