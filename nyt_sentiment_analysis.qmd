@@ -1,6 +1,12 @@
 ---
 title: "Sentiment Analysis of New York Times Comments(2017) "
-format: html
+author: "Francis Lauder"
+date: '2026-01-07'
+format: 
+    html:
+        toc: true
+        number-sections: false
+        toc-location: left
 ---
 
 # Introduction
