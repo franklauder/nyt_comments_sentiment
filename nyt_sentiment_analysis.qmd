@@ -5,17 +5,17 @@ format: html
 
 # Introduction
 
-<br>
+
 Natural language processing (NLP) basically focuses on using computers to analyze and understand text.   It converts human language into a format that machines can understand and process.  This enables computers to analyze and make sense of human language.  There are many techniques used in NLP, such as text classification, topic modeling, and others.  For our project we’ll be using the sentiment analysis technique.   Sentiment analysis determines the opinion of an author expressed in a piece of text.   The text can be categorized as either positive, negative, or neutral.    We’ll be analyzing comments from the New York Times for the 2017 year.  The data includes then months January through April.  The datasets used for our analysis can be found on the Kaggle web site at then following link.: https://www.kaggle.com/datasets/aashita/nyt-comments.  Code used for our analysis is hidden and can ber viewed by expanding the "Show Code" option
 
-<br>
+
 
 
 # Data Inspection
-<br/>
+
 
 ## We'll first load the required libraries. 
-<br/>
+
 
 
 ```{r}
@@ -97,7 +97,7 @@ nrow(nyt_comments17)
 ```
 
 
-<br/>
+
 
 ```{r}
 #| code-fold: true
@@ -162,12 +162,12 @@ nyt_comments17_short <- readRDS("nyt_comments17_short.rds")
 
 # Data Preparation
 
-<br>
+
 
 Now that our data is selected, we will prepare our data for analysis. First a function will be created to clean 
 the text in the commentBody.  This will include removing HTML/Markdown tags, backslashes, and replacing multiple spaces with a single space. 
 
-<br/>
+
 
 ```{r}
 #| code-fold: true
@@ -199,7 +199,7 @@ nyt_comments_clean<-nyt_comments17_short |>
 
 ```
 
-<br/>
+
 
 ```{r}
 #| code-fold: true
@@ -245,12 +245,12 @@ nrow(nyt_comments_clean)
 
 ```
 
-<br/>
+
 
 Because the dataset is relatively large at 969,655 rows, we will use parallel processing for efficency and speed during sentiment extraction. 
 To accomplish this we will use the future_map_dbl function from the the furrr library.  This function helps use cpu cores to parallel tasks. 
 All but one cpu core will be used for our processing. 
-<br/>
+
 
 
   ```{r}
@@ -263,11 +263,11 @@ plan(multisession, workers = parallel::detectCores() - 1)
 
   ```
 
- <br/>
+ 
 
 For our sentiment analysis we will need to choose a sentiment lexicon.  A lexicon is basically a sentiment dictionary that includes words and the sentiment the word has been tagged with such as negative or positive.  We’ll be using the AFINN dictionary, which instead of each work being tagged as negative or positive, they are given a numeric score with a negative score indicating negative sentiment, a positive score indicating a positive sentiment, and a score of zero indicating neutral sentiment.  The numeric scores range from -5 to 5.  AFINN calculates the compounded score for each sentence in the text by adding the scores (weights) of each of the sentiment words.   From this calculated score we can assign a category for each row of text. 
 
-<br/>
+
 
 ```{r}
 #| code-fold: true
@@ -278,12 +278,12 @@ get_sentiments("afinn")
 ```
 
 
-<br/>
+
 
 The first ten rows of te AFINN dictionary are shown above.  We see the first column is the word and second is the value holding the sentiment score. 
 
 
-<br/>
+
 
 
   ```{r}
@@ -298,7 +298,7 @@ comments17_sentiment<-nyt_comments_clean |>
 
   ```
 
-<br/>
+
 
   ```{r}
 #| code-fold: true
@@ -310,7 +310,7 @@ comments17_sentiment |> glimpse()
 
   ```
 
-<br/>
+
 
  
 
@@ -327,13 +327,13 @@ comments17_sentiment |>
 
   ```
 
-  <br/>
+  
 
 Using the glimpse function we now find  that there is a new column named "sentiment_score".  Viewing the first thirty rows we see that a score has been assigned to each row. 
 
 Now that we have sentiment scores our next step is to assign a sentiment based on these scores.  Negative scores (-5 to -1) will be assigned a sentiment of "negative", positive scores (1 to 5) will be assigned a sentiment of "positive", and a score of zero will be assigned "neutral".  This will be accomplished using the case_when function from the dplyr library.
 
-<br/>
+
 
 
   ```{r}
@@ -385,7 +385,7 @@ comments17_sentiment |>
 
   ```
 
-<br/>
+
 
   ```{r}
   
@@ -396,11 +396,11 @@ comments17_sentiment |>
 
   ```
 
-  <br/>
+  
 
 Our data now has a "sentiment" column reflecting negative, positive, or neutral, base on the sentiment_score coluimn. 
 
-<br/>
+
 
 
 
@@ -408,11 +408,11 @@ Our data now has a "sentiment" column reflecting negative, positive, or neutral,
 
 
 
-<br/>
+
 
 Visualization can help us view the percent breakdown of sentiment and compare sentiment by type of material and news desk.
 
-<br/>
+
 
 
 
@@ -463,13 +463,13 @@ tree_map
 
   ```
 
-<br/>
+
 From the Tree Map plot we find that postive and negative sentiments are virtuall equal at 42.2% and 42.8% respectively. 
 
-<br/>
 
 
-  Dot Plot
+
+  
 
 
   ```{r}
@@ -508,10 +508,10 @@ gg_dot_cnt
 
   ```
 
-  <br/>
+  
 
   Editorial has the greatest difference between negative and positive sentiment. 
-  <br/>
+  
 
   
 
@@ -583,6 +583,6 @@ gg_gtile
 
   ```
 
-  <br/>
+  
 
-Observing sentiment within each news desk section,the Styles, Dining, Book Review, and Metropolitan sections are by have the highest percentage pf positive comments, all being over 60%.  The foreign section has the greatest percentage of negative comments at 50% with 17% of comments being neutral. 
+Observing sentiment within each news desk section,the Styles, Dining, Book Review, and Metropolitan sections are by far have the highest percentage pf positive comments, all being over 60%.  The foreign section has the greatest percentage of negative comments at 50% with 17% of comments being neutral. 
