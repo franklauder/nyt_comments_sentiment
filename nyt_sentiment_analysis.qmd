@@ -1,12 +1,15 @@
 ---
-title: "Sentiment Analysis of New York Times Comments(2017) "
-author: "Francis Lauder"
-date: '2026-01-07'
+title: Sentiment Analysis of New York Times Comments(2017) 
+author: Francis Lauder
+date: 2026-01-07
 format: 
     html:
         toc: true
+        toc-depth: 3
+        toc_float: true
         number-sections: false
         toc-location: left
+        embed-resources: true
 ---
 
 # Introduction
@@ -34,6 +37,7 @@ library(tidytext)
 library(SnowballC)
 library(syuzhet)
 library(furrr)
+library(quarto)
 
 
 ```
@@ -478,5 +482,3 @@ gg_gtile
 
 
 ```
-
-Observing sentiment within each news desk section,the Styles, Dining, Book Review, and Metropolitan sections are by far have the highest percentage pf positive comments, all being over 60%. The foreign section has the greatest percentage of negative comments at 50% with 17% of comments being neutral.
