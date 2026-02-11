@@ -9,7 +9,7 @@ format:
         toc_float: true
         number-sections: false
         toc-location: left
-        embed-resources: true
+        embed-resources: 
 ---
 
 # Introduction
@@ -300,6 +300,25 @@ mutate(sentiment=case_when(
 
 
 
+
+
+
+
+
+```
+
+
+```{r}
+
+
+comments17_sentiment <-comments17_sentiment |> 
+  mutate(label=case_when(
+    sentiment_score < 0 ~"0",
+    sentiment_score > 0 ~"2",
+    TRUE~"1"
+  ))
+
+
 ```
 
 ```{r}
@@ -316,6 +335,16 @@ saveRDS(comments17_sentiment, "comments17_sentiment.rds")
 
 
 comments17_sentiment<-readRDS("comments17_sentiment.rds")
+
+
+```
+
+
+```{r}
+
+
+
+readr::write_csv(comments17_sentiment, "nyt_comments_sentiment17.csv")
 
 
 ```
@@ -482,3 +511,5 @@ gg_gtile
 
 
 ```
+
+Observing sentiment within each news desk section,the Styles, Dining, Book Review, and Metropolitan sections are by far have the highest percentage pf positive comments, all being over 60%. The foreign section has the greatest percentage of negative comments at 50% with 17% of comments being neutral.
